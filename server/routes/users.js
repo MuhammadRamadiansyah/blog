@@ -1,9 +1,10 @@
 const router = require('express').Router()
-const { signin, signup, myPosts, newPost, editPost, deletePost, reportPost, getAllPosts, getAllReportPost, deleteReportPost, acceptReportPost} = require('../controllers/controller_user')
+const { getAllTags, signin, signup, myPosts, newPost, editPost, deletePost, reportPost, getAllPosts, getAllReportPost, deleteReportPost, acceptReportPost} = require('../controllers/controller_user')
 const { authLogin, authAdmin } = require('../middlewares/auth')
 
 router.get('/', authLogin, myPosts)
 router.get('/posts', getAllPosts)
+router.get('/tags', getAllTags)
 router.post('/signup', signup)
 router.post('/signin', signin)
 router.post('/add', authLogin, newPost),

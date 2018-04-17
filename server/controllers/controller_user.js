@@ -385,5 +385,21 @@ module.exports = {
              message: err.message
            })
          })
+  },
+  getAllTags: function(req, res){
+
+    Tags.find()
+        .exec()
+        .then(tags=>{
+          res.status(200).json({
+            message: 'success get all tags',
+            tags
+          })
+        })
+        .catch(err=>{
+          res.status(500).json({
+            message: err.message
+          })
+        })
   }
 }
