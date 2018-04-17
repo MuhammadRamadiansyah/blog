@@ -10,7 +10,7 @@ let userSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    unique: [true, 'email sudah terdaftar'],
+    // unique: [true, 'email sudah terdaftar'],
     validate: {
       validator: function(email){
           return /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(String(email).toLowerCase());
@@ -19,12 +19,15 @@ let userSchema = new mongoose.Schema({
     },
     required: [true, 'name cannot be empty']
   },
+  password: {
+      type: String,
+  },
   role: {
     type: String,
   },
-  posts:[{
+  blogs:[{
     type: Schema.Types.ObjectId,
-    ref: "posts"
+    ref: "blogs"
   }]
   },{
     timestamps: true
@@ -58,6 +61,6 @@ userSchema.methods.generateHash = function(password, cb){
       }
   })
 }
-let Users = mongoose.model('Users', userSchema)
+let Users = mongoose.model('users', userSchema)
 
 module.exports = Users
