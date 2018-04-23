@@ -9,20 +9,20 @@ const jwt = require('jsonwebtoken')
 module.exports = {
 
   signup: function(req, res){
-
     let newData = {
       name: req.body.name,
       email: req.body.email,
       password: req.body.password,
       role: req.body.role,
+      blogs: []
     }
-
+    console.log(newData, 'tessss')
     let user = new Users(newData)
-    Users.schema.methods.generateHash(user.password, function(err, result){
+    Users.schema.methods.generateHash(user.password, function(err, hash){
       if(err) res.status(500).json({message: err.message});
-      user.password = result;
+      user.password = hash;
       user.save()
-        .then(data=>{
+        .then((data) => {
           res.status(201).json({
             data,
             message:"success register"
@@ -33,8 +33,7 @@ module.exports = {
             message: err.message
           })
         })
-    })
-    
+    })   
   },
   signin: function(req, res){
     let email = req.body.email
@@ -103,6 +102,7 @@ module.exports = {
                     content: req.body.content,
                     tags: newTag._id,
                     report: false,
+                    private: req.body.private
                   }
                   let blog = new Blogs(newArticle)
                   blog.save()

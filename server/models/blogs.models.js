@@ -16,6 +16,9 @@ let blogSchema = new mongoose.Schema({
   report: {
       type: Boolean,
     },
+  private: {
+    type: Boolean,
+  },
   tags:[{
       type: Schema.Types.ObjectId,
       ref: "tags"
