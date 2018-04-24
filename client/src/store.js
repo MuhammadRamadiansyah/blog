@@ -31,7 +31,6 @@ export default new Vuex.Store({
       state.user = ''
       state.isLogin = false
       localStorage.removeItem('token')
-      location.reload()
     },
     getBlogData (state, payload) {
       state.blogDetail = payload
