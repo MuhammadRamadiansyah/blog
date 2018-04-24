@@ -40,6 +40,7 @@ module.exports = {
     let password = req.body.password
 
     Users.findOne({email: email})
+         .populate('blogs')
          .exec()
          .then(user=>{
           if(user == null){
@@ -71,8 +72,7 @@ module.exports = {
     Users.findOne({_id: user.id})
          .populate('blogs')
          .exec()
-         .then(user=>{
-           
+         .then(user=>{ 
           res.status(200).json({
             user
           })
@@ -84,149 +84,206 @@ module.exports = {
          })  
   },
   newPost: function(req, res){
-
-    let user = req.decoded
-    Tags.findOne({category: req.body.tags})
-        .exec()
-        .then(tag=>{
-          if(tag==null){
-            let newTagData = {
-              category: req.body.tags,
-            }
-            let tag = new Tags(newTagData)
-            tag.save()
-               .then(newTag =>{
-                  let newArticle = {
-                    user: user.id,
-                    title: req.body.title,
-                    content: req.body.content,
-                    tags: newTag._id,
-                    report: false,
-                    private: req.body.private
-                  }
-                  let blog = new Blogs(newArticle)
-                  blog.save()
-                      .then(newBlog=>{
-                        let updateData = {
-                          $push: {blogs: newBlog._id},
-                          updatedAt: new Date()
-                        }
-                        Tags.findOneAndUpdate({_id: tag._id}, updateData)
-                            .then(updateData=>{
-                              let updateBlog = {
-                                $push: {blogs: newBlog._id},
-                              }
-                              Users.findOneAndUpdate({_id: user.id}, updateBlog)
-                                   .then(result=>{
-                                      res.status(201).json({
-                                        result,
-                                        updateData,
-                                        newBlog,
-                                        message: "success add one new post",
-                                      })
-                                   })
-                                   .catch(err=>{
-                                     res.status(500).json({
-                                       message: err.message
-                                     })
-                                   })
-                            })
-                            .catch(err=>{
-                              res.status(500).json({
-                                message: err.message
-                              })
-                            }) 
-                      })
-                      .catch(err=>{
-                        res.status(500).json({
-                          message: err.message
-                        })
-                      })
-               })
-               .catch(err=>{
-                 res.status(500).json({
-                   message: err.message
-                 })
-               })
-          }else{
-            let newArticle = {
-              user: user.id,
-              title: req.body.title,
-              content: req.body.content,
-              tags: tag._id,
-              report: false,
-            }
-            let blog = new Blogs(newArticle)
-            blog.save()
-                .then(newBlog=>{
-
-                  let updateData = {
-                    $push: {blogs: newBlog._id},
-                    updatedAt: new Date()
-                  }
-                  Tags.findOneAndUpdate({_id: tag._id}, updateData)
-                      .then(updateData=>{
-                        let updateBlog = {
-                          $push: {blogs: newBlog._id},
-                        }
-                        Users.findOneAndUpdate({_id: user.id}, updateBlog)
-                             .then(result=>{
-                                res.status(201).json({
-                                  result,
-                                  updateData,
-                                  newBlog,
-                                  message: "success add one new post",
-                                })
-                             })
-                             .catch(err=>{
-                               res.status(500).json({
-                                 message: err.message
-                               })
-                             })
-                      })
-                      .catch(err=>{
-                        res.status(500).json({
-                          message: err.message
-                        })
-                      }) 
+    let summary = ''
+    let arrSummary = req.body.content.split(' ')
+    if(arrSummary.length > 30) {
+      for(let i=0; i<Math.round(arrSummary.length / 3); i++){
+        summary = summary + ' ' + arrSummary[i]
+      }
+    } else {
+      summary = req.body.content
+    }
+    
+    summary.substr(1, summary.length -1)
+    
+    Tags.findOne({category: req.body.tag})
+        .then((tag) => {
+          let blog = new Blogs({
+            user: req.decoded.id,
+            title: req.body.title,
+            content: req.body.content,
+            summary: summary,
+            tag: tag._id,
+            status: req.body.status
+          })
+          console.log(blog.summary,' ini')
+          blog.save()
+              .then((result) => {
+                res.status(201).json({
+                  message: 'success add post',
+                  result
                 })
-                .catch(err=>{
-                  res.status(500).json({
-                    message: err.message
-                  })
+              })
+              .catch((err) => {
+                res.status(500).json({
+                  message: err.message
                 })
-          }
+              })
         })
-        .catch(err=>{
+        .catch((err) => {
+          res.status(500).json({
+            message: err.message
+          })
+        })
+    // Tags.findOne({category: req.body.tags})
+    //     .exec()
+    //     .then(tag=>{
+    //       if(tag==null){
+    //         let newTagData = {
+    //           category: req.body.tags,
+    //         }
+    //         let tag = new Tags(newTagData)
+    //         tag.save()
+    //            .then(newTag =>{
+    //               let newArticle = {
+    //                 user: user.id,
+    //                 title: req.body.title,
+    //                 content: req.body.content,
+    //                 tags: newTag._id,
+    //                 report: false,
+    //                 private: req.body.private
+    //               }
+    //               let blog = new Blogs(newArticle)
+    //               blog.save()
+    //                   .then(newBlog=>{
+    //                     let updateData = {
+    //                       $push: {blogs: newBlog._id},
+    //                       updatedAt: new Date()
+    //                     }
+    //                     Tags.findOneAndUpdate({_id: tag._id}, updateData)
+    //                         .then(updateData=>{
+    //                           let updateBlog = {
+    //                             $push: {blogs: newBlog._id},
+    //                           }
+    //                           Users.findOneAndUpdate({_id: user.id}, updateBlog)
+    //                                .then(result=>{
+    //                                   res.status(201).json({
+    //                                     result,
+    //                                     updateData,
+    //                                     newBlog,
+    //                                     message: "success add one new post",
+    //                                   })
+    //                                })
+    //                                .catch(err=>{
+    //                                  res.status(500).json({
+    //                                    message: err.message
+    //                                  })
+    //                                })
+    //                         })
+    //                         .catch(err=>{
+    //                           res.status(500).json({
+    //                             message: err.message
+    //                           })
+    //                         }) 
+    //                   })
+    //                   .catch(err=>{
+    //                     res.status(500).json({
+    //                       message: err.message
+    //                     })
+    //                   })
+    //            })
+    //            .catch(err=>{
+    //              res.status(500).json({
+    //                message: err.message
+    //              })
+    //            })
+    //       }else{
+    //         let newArticle = {
+    //           user: user.id,
+    //           title: req.body.title,
+    //           content: req.body.content,
+    //           tags: tag._id,
+    //           report: false,
+    //         }
+    //         let blog = new Blogs(newArticle)
+    //         blog.save()
+    //             .then(newBlog=>{
 
-        })
+    //               let updateData = {
+    //                 $push: {blogs: newBlog._id},
+    //                 updatedAt: new Date()
+    //               }
+    //               Tags.findOneAndUpdate({_id: tag._id}, updateData)
+    //                   .then(updateData=>{
+    //                     let updateBlog = {
+    //                       $push: {blogs: newBlog._id},
+    //                     }
+    //                     Users.findOneAndUpdate({_id: user.id}, updateBlog)
+    //                          .then(result=>{
+    //                             res.status(201).json({
+    //                               result,
+    //                               updateData,
+    //                               newBlog,
+    //                               message: "success add one new post",
+    //                             })
+    //                          })
+    //                          .catch(err=>{
+    //                            res.status(500).json({
+    //                              message: err.message
+    //                            })
+    //                          })
+    //                   })
+    //                   .catch(err=>{
+    //                     res.status(500).json({
+    //                       message: err.message
+    //                     })
+    //                   }) 
+    //             })
+    //             .catch(err=>{
+    //               res.status(500).json({
+    //                 message: err.message
+    //               })
+    //             })
+    //       }
+    //     })
+    //     .catch(err=>{
+
+    //     })
   },
   editPost: function(req, res){
     let getId = req.params.id
+    let summary = ''
+    let arrSummary = req.body.content.split(' ')
+    for(let i=0; i<Math.round(arrSummary.length / 3); i++){
+      summary = summary + ' ' + arrSummary[i]
+    }
+    summary.substr(1, summary.length -1)
     let newData = {
+      user: req.decoded.id,
       title: req.body.title,
       content: req.body.content,
+      status: req.body.status,
+      summary,
+      tag: req.body.tag,
       updatedAt: new Date()
     }
-    Blogs.findOneAndUpdate({_id: getId}, newData)
-         .then(result=>{
-            res.status(200).json({
-              result,
-              message: "success edit blog"
+    Tags.findOne({category: req.body.tag})
+        .then((tag) => {
+          newData.tag = tag._id
+          Blogs.findOneAndUpdate({_id: getId}, newData)
+          .then(result=>{
+             res.status(200).json({
+               result,
+               message: "success edit blog"
+             })
+          })
+          .catch(err=>{
+            res.status(500).json({
+              message: err.message
             })
-         })
-         .catch(err=>{
-           res.status(500).json({
-             message: err.message
-           })
-         })   
+          })  
+        })
+        .catch((err) => {
+          res.status(500).json({
+            message: err.message
+          })
+        })
   },
   deletePost: function(req, res){
 
     // let dummyTag = '5ad5c6143e029714033b1a63' 
     // let dummyUser = '5ad5929844d6fe05e7b77d3d'
     let getId = req.params.id   
-    console.log(getId)
     Blogs.findOne({_id: getId})
          .exec()
          .then(userData=>{
@@ -295,10 +352,10 @@ module.exports = {
     
     
   },
-  getAllPosts: function(req, res){
-    
+  getAllPosts: function(req, res){  
     Blogs.find()
-         .populate('tags')
+         .populate('tag')
+         .populate('user')
          .exec()
          .then(blogs=>{
           res.status(200).json({
@@ -401,5 +458,36 @@ module.exports = {
             message: err.message
           })
         })
+  },
+  addTags: function (req,res) {
+    let tag = new Tags({
+      category: req.body.category
+    })
+    tag.save()
+       .then((tag) => {
+         res.status(201).json({
+           message: 'success add new tag',
+           tag
+         })
+       })
+       .catch((err) => {
+         res.status(500).json({
+           message: err.message
+         })
+       })
+  },
+  getBlog: function (req, res) {
+    Blogs.findOne({_id: req.params.id})
+         .then((blog) => {
+           res.status(200).json({
+             blog,
+             message: 'success get data blog'
+           })
+           .catch((err) => {
+             res.status(500).json({
+               message: err.message
+             })
+           })
+         })
   }
 }

@@ -13,19 +13,34 @@ let blogSchema = new mongoose.Schema({
   content: {
       type: String,
     },
-  report: {
-      type: Boolean,
-    },
-  private: {
-    type: Boolean,
+  status: {
+    type: String,
   },
-  tags:[{
+  summary: {
+    type: String,
+  },
+  tag: {
       type: Schema.Types.ObjectId,
       ref: "tags"
-    }]
+    }
   },{
     timestamps: true
 })
+
+blogSchema.pre('save', function (next) {
+  this.model('users').update(
+    {_id: this.user},
+    {$push: {blogs: this._id}},
+    {multi: true},
+    next
+  )
+  this.model('tags').update(
+    {_id: this.tag},
+    {push: {blogs: this._id}},
+    {multi: true}
+  )
+})
+
 blogSchema.pre('remove', function(next){
 
   this.model('tags').update(
@@ -34,16 +49,12 @@ blogSchema.pre('remove', function(next){
     {multi: true},
     next,
   )
-
   this.model('users').update(
       {_id:  {$in: this.user}}, 
       {$pull: {blogs: this._id}}, 
       {multi: true},
       next,
   );
- 
-
-
 });
 
 blogSchema.post('remove', function(deleteData){
