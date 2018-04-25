@@ -129,7 +129,7 @@ export default {
   methods: {
     register () {
       if (this.checkValidation) {
-        axios.post('http://localhost:3000/users/signup', {email: this.newEmail, password: this.newPassword, name: this.newName, role: 'user'})
+        axios.post('http://blog-server.ramadiansyah.gq/users/signup', {email: this.newEmail, password: this.newPassword, name: this.newName, role: 'user'})
           .then((response) => {
             swal({
               title: 'Good job!',

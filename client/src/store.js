@@ -41,7 +41,7 @@ export default new Vuex.Store({
   },
   actions: {
     login ({ commit }, payload) {
-      axios.post('http://localhost:3000/users/signin', {email: payload.email, password: payload.password}, {})
+      axios.post('http://blog-server.ramadiansyah.gq/users/signin', {email: payload.email, password: payload.password}, {})
         .then((response) => {
           swal({
             title: 'Good job!',
@@ -59,7 +59,7 @@ export default new Vuex.Store({
         })
     },
     getAllTags ({ commit }) {
-      axios.get('http://localhost:3000/users/tags')
+      axios.get('http://blog-server.ramadiansyah.gq/users/tags')
         .then((response) => {
           commit('getAllTags', response.data.tags)
         })
@@ -69,7 +69,7 @@ export default new Vuex.Store({
     },
     newPost ({commit}, payload) {
       console.log(payload)
-      axios.post('http://localhost:3000/users/add', {title: payload.title, content: payload.content, tag: payload.tag, status: payload.privateStatus}, {headers: {token: localStorage.getItem('token')}})
+      axios.post('http://blog-server.ramadiansyah.gq/users/add', {title: payload.title, content: payload.content, tag: payload.tag, status: payload.privateStatus}, {headers: {token: localStorage.getItem('token')}})
         .then((response) => {
           swal({
             title: 'Good job!',
@@ -89,7 +89,7 @@ export default new Vuex.Store({
         })
     },
     getUserData ({commit}) {
-      axios.get('http://localhost:3000/users', {headers: {token: localStorage.getItem('token')}})
+      axios.get('http://blog-server.ramadiansyah.gq/users', {headers: {token: localStorage.getItem('token')}})
         .then((response) => {
           commit('getUserData', response.data.user)
         })
@@ -98,7 +98,7 @@ export default new Vuex.Store({
         })
     },
     getBlogData ({commit}, payload) {
-      axios.get(`http://localhost:3000/users/post/${payload}`, {headers: {token: localStorage.getItem('token')}})
+      axios.get(`http://blog-server.ramadiansyah.gq/users/post/${payload}`, {headers: {token: localStorage.getItem('token')}})
         .then((response) => {
           commit('getBlogData', response.data.blog)
         })
@@ -107,7 +107,7 @@ export default new Vuex.Store({
         })
     },
     editPost ({commit}, payload) {
-      axios.put(`http://localhost:3000/users/post/edit/${payload.id}`, {title: payload.title, content: payload.content, status: payload.privateStatus, tag: payload.tag}, {headers: {token: localStorage.getItem('token')}})
+      axios.put(`http://blog-server.ramadiansyah.gq/users/post/edit/${payload.id}`, {title: payload.title, content: payload.content, status: payload.privateStatus, tag: payload.tag}, {headers: {token: localStorage.getItem('token')}})
         .then((response) => {
           swal({
             title: 'Good job!',
@@ -121,7 +121,7 @@ export default new Vuex.Store({
         })
     },
     deletePost ({commit}, payload) {
-      axios.delete(`http://localhost:3000/users/post/delete/${payload}`, {headers: {token: localStorage.getItem('token')}})
+      axios.delete(`http://blog-server.ramadiansyah.gq/users/post/delete/${payload}`, {headers: {token: localStorage.getItem('token')}})
         .then((response) => {
           console.log(response.data)
         })
@@ -130,7 +130,7 @@ export default new Vuex.Store({
         })
     },
     getAllBlogsData ({commit}) {
-      axios.get('http://localhost:3000/users/posts')
+      axios.get('http://blog-server.ramadiansyah.gq/users/posts')
         .then((response) => {
           commit('getAllBlogs', response.data.blogs)
         })
