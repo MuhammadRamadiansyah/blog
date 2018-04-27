@@ -31,6 +31,7 @@ export default new Vuex.Store({
       state.user = ''
       state.isLogin = false
       localStorage.removeItem('token')
+      localStorage.removeItem('role')
     },
     getBlogData (state, payload) {
       state.blogDetail = payload
@@ -51,6 +52,7 @@ export default new Vuex.Store({
           })
             .then((result) => {
               localStorage.setItem('token', response.data.token)
+              localStorage.setItem('role', response.data.user.role)
               commit('getUserData', response.data.user)
             })
         })
@@ -64,11 +66,11 @@ export default new Vuex.Store({
           commit('getAllTags', response.data.tags)
         })
         .catch((err) => {
-          swal('Get all tags failed', err.message, 'failed')
+          console.log(err.message)
+          // swal('Get all tags failed', err.message, 'failed')
         })
     },
     newPost ({commit}, payload) {
-      console.log(payload)
       axios.post('http://blog-server.ramadiansyah.gq/users/add', {title: payload.title, content: payload.content, tag: payload.tag, status: payload.privateStatus}, {headers: {token: localStorage.getItem('token')}})
         .then((response) => {
           swal({
@@ -94,7 +96,8 @@ export default new Vuex.Store({
           commit('getUserData', response.data.user)
         })
         .catch((err) => {
-          swal('get data user failed', err.message, 'failed')
+          console.log(err.message)
+          // swal('get data user failed', err.message, 'failed')
         })
     },
     getBlogData ({commit}, payload) {
@@ -103,7 +106,8 @@ export default new Vuex.Store({
           commit('getBlogData', response.data.blog)
         })
         .catch((err) => {
-          swal('get data user failed', err.message, 'failed')
+          console.log(err.message)
+          // swal('get data user failed', err.message, 'failed')
         })
     },
     editPost ({commit}, payload) {
@@ -135,7 +139,8 @@ export default new Vuex.Store({
           commit('getAllBlogs', response.data.blogs)
         })
         .catch((err) => {
-          swal('get all posts failed', err.message, 'failed')
+          console.log(err.message)
+          // swal('get all posts failed', err.message, 'failed')
         })
     }
   }

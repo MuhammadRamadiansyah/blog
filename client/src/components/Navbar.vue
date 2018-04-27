@@ -53,6 +53,13 @@
                 <small id="emailHelpRegis" class="form-text text-muted"></small>
               </div>
               <div class="form-group">
+                <label for="exampleInputRole">Role</label>
+                <select class="custom-select my-1 mr-sm-2" id="newRole">
+                  <option aria-placeholder="Select an option" value="user">User</option>
+                  <option aria-placeholder="Select an option" value="admin">Admin</option>
+                </select>
+              </div>
+              <div class="form-group">
                 <label for="exampleInputPassword1">Password</label>
                 <input type="password" name="new_password" class="form-control" id="newPassword" placeholder="Password"  v-model="newPassword">
                 <small id="passwordHelpRegis" class="form-text text-muted"></small>
@@ -129,7 +136,8 @@ export default {
   methods: {
     register () {
       if (this.checkValidation) {
-        axios.post('http://blog-server.ramadiansyah.gq/users/signup', {email: this.newEmail, password: this.newPassword, name: this.newName, role: 'user'})
+        let newRole = $('#newRole').val()
+        axios.post('http://blog-server.ramadiansyah.gq/users/signup', {email: this.newEmail, password: this.newPassword, name: this.newName, role: newRole})
           .then((response) => {
             swal({
               title: 'Good job!',
