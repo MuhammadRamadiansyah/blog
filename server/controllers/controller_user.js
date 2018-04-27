@@ -16,23 +16,22 @@ module.exports = {
       role: req.body.role,
       blogs: []
     }
-    console.log(newData, 'tessss')
     let user = new Users(newData)
     Users.schema.methods.generateHash(user.password, function(err, hash){
       if(err) res.status(500).json({message: err.message});
       user.password = hash;
       user.save()
-        .then((data) => {
-          res.status(201).json({
-            data,
-            message:"success register"
+          .then((data) => {
+            res.status(201).json({
+              data,
+              message:"success register"
+            })
           })
-        })
-        .catch(err=>{
-          res.status(400).json({
-            message: err.message
+          .catch(err=>{
+            res.status(400).json({
+              message: err.message
+            })
           })
-        })
     })   
   },
   signin: function(req, res){
@@ -47,17 +46,18 @@ module.exports = {
             res.status(404).json({
               message: "email is wrong"
             })
-          }else{
+          } else{ 
             Users.schema.methods.comparePassword(password, user.password, function(err, result){
               if(err) {
                 res.status(404).json({message: err.message});
-              }
-              let token = jwt.sign({id: user._id, email: user.email, role: user.role}, secretKey)
-              res.status(200).json({
-                message: "success login",
-                token,
-                user
-              })
+              } else {
+                let token = jwt.sign({id: user._id, email: user.email, role: user.role}, secretKey)
+                res.status(200).json({
+                  message: "success login",
+                  token,
+                  user
+                })
+              }     
             })     
           }
          })
@@ -93,9 +93,7 @@ module.exports = {
     } else {
       summary = req.body.content
     }
-    
     summary.substr(1, summary.length -1)
-    
     Tags.findOne({category: req.body.tag})
         .then((tag) => {
           let blog = new Blogs({
@@ -106,7 +104,6 @@ module.exports = {
             tag: tag._id,
             status: req.body.status
           })
-          console.log(blog.summary,' ini')
           blog.save()
               .then((result) => {
                 res.status(201).json({
@@ -257,6 +254,7 @@ module.exports = {
       tag: req.body.tag,
       updatedAt: new Date()
     }
+    console.log('masuk')
     Tags.findOne({category: req.body.tag})
         .then((tag) => {
           newData.tag = tag._id

@@ -37,7 +37,8 @@ blogSchema.pre('save', function (next) {
   this.model('tags').update(
     {_id: this.tag},
     {push: {blogs: this._id}},
-    {multi: true}
+    {multi: true},
+    next
   )
 })
 

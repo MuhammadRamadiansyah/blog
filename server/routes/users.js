@@ -7,8 +7,8 @@ router.get('/posts', getAllPosts)
 router.get('/tags', getAllTags)
 router.post('/signup', signup)
 router.post('/signin', signin)
-router.post('/add', authLogin, newPost)
 
+router.post('/add', authLogin, newPost)
 router.get('/post/:id', authLogin, getBlog)
 router.put('/post/edit/:id', authLogin, editPost)
 router.delete('/post/delete/:id', authLogin, deletePost)
@@ -20,4 +20,4 @@ router.patch('/report/post/:id', authLogin, authAdmin, acceptReportPost)
 router.post('/addTags', addTags)
 
 
-module.exports = router
+module.exports = router 

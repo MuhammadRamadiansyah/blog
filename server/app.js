@@ -10,7 +10,8 @@ require('dotenv').config()
 const mongoose = require('mongoose')
 const getMongoUsername = process.env.mlabusername
 const getMongoPassword = process.env.mlabpassword
-const mongoDB = mongoose.connect(`mongodb://${getMongoUsername}:${getMongoPassword}@ds147659.mlab.com:47659/blog-rama`);
+// const mongoDB = mongoose.connect(`mongodb://${getMongoUsername}:${getMongoPassword}@ds147659.mlab.com:47659/blog-rama`);
+mongoose.connect('mongodb://localhost/blog')
 const db = mongoose.connection
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
